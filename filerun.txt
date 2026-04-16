@@ -1,0 +1,7 @@
+# Terminal 1
+cd backend
+node server.js
+
+# Terminal 2
+cd frontend
+npm run dev

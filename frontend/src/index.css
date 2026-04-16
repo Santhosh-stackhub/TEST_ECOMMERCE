@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* PREMIUM GRADIENT TEXT */
+.devcrew-animate {
+  display: inline-block;
+  min-width: 120px; /* enough for DemoStore */
+  text-align: center;
+
+  background: linear-gradient(120deg, #22c55e, #eab308, #16a34a, #facc15);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: gradientFlow 6s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+/* SMOOTH GRADIENT FLOW */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ENTER */
+.devcrew-animate.show {
+  opacity: 1;
+  transform: translateY(0px) scale(1);
+}
+
+/* EXIT */
+.devcrew-animate.hide {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+}
+
+/* Smooth horizontal scrolling */
+.animate-scroll {
+  display: inline-flex;
+  animation: scrollText 20s linear infinite;
+}
+
+/* Continuous loop */
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
