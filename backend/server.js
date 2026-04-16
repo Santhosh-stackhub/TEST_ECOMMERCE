@@ -8,39 +8,37 @@ app.use(express.json());
 
 const db = new Database("db.sqlite");
 
-// CREATE TABLE
+// Create table
 db.prepare(`
-  CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    price INTEGER,
-    image TEXT,
-    category TEXT
-  )
+CREATE TABLE IF NOT EXISTS products (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  price INTEGER,
+  image TEXT,
+  category TEXT
+)
 `).run();
 
-// SAMPLE DATA (optional)
-const insert = db.prepare(`
-  INSERT INTO products (name, price, image, category)
-  VALUES (?, ?, ?, ?)
-`);
-
+// Insert sample if empty
 const count = db.prepare("SELECT COUNT(*) as count FROM products").get();
 
 if (count.count === 0) {
-  insert.run("iPhone", 80000, "https://via.placeholder.com/150", "electronics");
-  insert.run("Shoes", 2000, "https://via.placeholder.com/150", "fashion");
+  db.prepare("INSERT INTO products (name, price, image, category) VALUES (?, ?, ?, ?)")
+    .run("iPhone", 80000, "https://via.placeholder.com/150", "electronics");
+
+  db.prepare("INSERT INTO products (name, price, image, category) VALUES (?, ?, ?, ?)")
+    .run("Shoes", 2000, "https://via.placeholder.com/150", "fashion");
 }
 
-// API
-
-app.get("/", (req, res) => {
-  res.send("Backend is running 🚀");
-});
-
+// ✅ PRODUCTS ROUTE
 app.get("/products", (req, res) => {
   const rows = db.prepare("SELECT * FROM products").all();
   res.json(rows);
+});
+
+// Root
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
 });
 
 const PORT = process.env.PORT || 5000;
