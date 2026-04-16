@@ -1,60 +1,42 @@
 const express = require("express");
-const Database = require("better-sqlite3");
-
 const cors = require("cors");
-const PORT = process.env.PORT || 5000;
-
+const Database = require("better-sqlite3");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.listen(PORT, () => console.log("Server running"));
 
 const db = new Database("db.sqlite");
 
-// ✅ STEP 1: CREATE TABLE FIRST
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+// CREATE TABLE
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY,
     name TEXT,
-    category TEXT,
     price INTEGER,
-    original_price INTEGER,
-    rating REAL,
-    image TEXT
-  )`);
+    image TEXT,
+    category TEXT
+  )
+`).run();
 
-  // ✅ STEP 2: INSERT DATA AFTER TABLE CREATED
-  const products = [
-    ["iPhone", "Electronics", 80000, 90000, 4.5, "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9"],
-    ["Laptop", "Electronics", 60000, 75000, 4.3, "https://images.unsplash.com/photo-1517336714731-489689fd1ca8"],
-    ["Headphones", "Electronics", 2000, 3000, 4.2, "https://images.unsplash.com/photo-1518444065439-e933c06ce9cd"],
-    ["T-Shirt", "Clothing", 500, 1000, 4.1, "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"],
-    ["Jeans", "Clothing", 1500, 2500, 4.0, "https://images.unsplash.com/photo-1541099649105-f69ad21f3246"],
-    ["Shoes", "Footwear", 2000, 3500, 4.4, "https://images.unsplash.com/photo-1542291026-7eec264c27ff"]
-  ];
+// SAMPLE DATA (optional)
+const insert = db.prepare(`
+  INSERT INTO products (name, price, image, category)
+  VALUES (?, ?, ?, ?)
+`);
 
-  db.get("SELECT COUNT(*) as count FROM products", (err, row) => {
-    if (row.count === 0) {
-      products.forEach(p => {
-        db.run(
-          "INSERT INTO products (name, category, price, original_price, rating, image) VALUES (?, ?, ?, ?, ?, ?)",
-          p
-        );
-      });
-    }
-  });
-});
+const count = db.prepare("SELECT COUNT(*) as count FROM products").get();
 
-// ✅ STEP 3: API
+if (count.count === 0) {
+  insert.run("iPhone", 80000, "https://via.placeholder.com/150", "electronics");
+  insert.run("Shoes", 2000, "https://via.placeholder.com/150", "fashion");
+}
+
+// API
 app.get("/products", (req, res) => {
-  db.all("SELECT * FROM products", [], (err, rows) => {
-    if (err) return res.status(500).json(err);
-    res.json(rows);
-  });
+  const rows = db.prepare("SELECT * FROM products").all();
+  res.json(rows);
 });
 
-// ✅ STEP 4: SERVER
-app.listen(5000, () => {
-  console.log("Backend running on 5000");
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log("Server running"));
