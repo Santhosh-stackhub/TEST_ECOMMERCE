@@ -11,7 +11,7 @@ export default function Home({ cart, setCart }) {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/products")
+    axios.get("https://your-backend-url.onrender.com/products")
       .then(res => setProducts(res.data));
   }, []);
 
