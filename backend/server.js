@@ -33,6 +33,11 @@ if (count.count === 0) {
 }
 
 // API
+
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
+
 app.get("/products", (req, res) => {
   const rows = db.prepare("SELECT * FROM products").all();
   res.json(rows);
