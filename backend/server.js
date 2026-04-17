@@ -9,7 +9,7 @@ app.use(express.json());
 
 const db = new Database(path.join(__dirname, "db.sqlite"));
 
-// Create table
+// CREATE TABLE
 db.prepare(`
 CREATE TABLE IF NOT EXISTS products (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,33 +20,27 @@ CREATE TABLE IF NOT EXISTS products (
 )
 `).run();
 
-// CLEAR + INSERT DATA (force fix)
+// FORCE INSERT DATA (IMPORTANT)
 db.prepare("DELETE FROM products").run();
 
 const insert = db.prepare(
   "INSERT INTO products (name, price, image, category) VALUES (?, ?, ?, ?)"
 );
 
-insert.run("iPhone", 80000, "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9", "electronics");
-insert.run("Laptop", 60000, "https://images.unsplash.com/photo-1517336714731-489689fd1ca8", "electronics");
-insert.run("T-Shirt", 500, "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab", "clothing");
-insert.run("Jeans", 1500, "https://images.unsplash.com/photo-1514996937319-344454492b37", "clothing");
+insert.run("iPhone", 80000, "https://via.placeholder.com/150", "electronics");
+insert.run("Laptop", 60000, "https://via.placeholder.com/150", "electronics");
+insert.run("T-Shirt", 500, "https://via.placeholder.com/150", "clothing");
+insert.run("Shoes", 2000, "https://via.placeholder.com/150", "footwear");
 
 // TEST ROUTE
 app.get("/", (req, res) => {
-  res.send("Backend working 🚀");
+  res.send("Backend running 🚀");
 });
 
-// PRODUCTS ROUTE
+// PRODUCTS ROUTE (THIS WAS MISSING ❌)
 app.get("/products", (req, res) => {
-  try {
-    const data = db.prepare("SELECT * FROM products").all();
-    console.log("Sending products:", data);
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error fetching products");
-  }
+  const products = db.prepare("SELECT * FROM products").all();
+  res.json(products);
 });
 
 const PORT = process.env.PORT || 5000;
