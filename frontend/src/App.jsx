@@ -1,42 +1,53 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
-const BACKEND_URL = "https://YOUR-BACKEND.onrender.com/products";
+// DevCrew sections
+import Hero from "./components/Hero";
+
+// Ecommerce pages
+import Home from "./pages/Home";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 
 function App() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    axios.get(BACKEND_URL)
-      .then(res => {
-        console.log("DATA:", res.data);
-        setProducts(res.data);
-      })
-      .catch(err => {
-        console.error("ERROR:", err);
-      });
-  }, []);
-
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">DevCrew Store 🚀</h1>
+    <div className="bg-[#0F172A] text-white min-h-screen">
+      
+      <Navbar />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.length > 0 ? (
-          products.map(p => (
-            <div key={p.id} className="bg-white p-4 rounded shadow">
-              <img src={p.image} alt={p.name} className="w-full h-40 object-cover rounded" />
-              <h2 className="text-xl mt-2">{p.name}</h2>
-              <p className="text-green-600 font-bold">₹{p.price}</p>
-              <button className="mt-3 bg-yellow-400 px-4 py-2 rounded w-full">
-                Add to Cart
-              </button>
-            </div>
-          ))
-        ) : (
-          <p>No products found 😢</p>
-        )}
-      </div>
+      <Routes>
+        {/* DEV CREW LANDING */}
+        <Route
+          path="/"
+          element={
+            <>
+              <Hero />
+
+              <div className="p-10 text-center">
+                <h2 className="text-3xl text-yellow-400 font-bold">
+                  DevCrew 🚀
+                </h2>
+
+                <p className="mt-4 text-gray-300">
+                  We build web apps, mobile apps, and digital solutions.
+                </p>
+
+                <a
+                  href="/store"
+                  className="mt-6 inline-block bg-green-400 text-black px-6 py-2 rounded"
+                >
+                  View Demo Store
+                </a>
+              </div>
+            </>
+          }
+        />
+
+        {/* ECOMMERCE */}
+        <Route path="/store" element={<Home />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+      </Routes>
     </div>
   );
 }
